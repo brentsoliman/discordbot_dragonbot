@@ -33,17 +33,17 @@ class Mile(Base):
     distance = Column("distance",Float)
     created_at = Column("created_at",TIMESTAMP,default=datetime.date.today())
     
-    def __init__(self,discord_id, distance):
+    def __init__(self,discord_id, distance,created_at):
         self.discord_id = discord_id
         self.distance = distance
+        self.created_at = created_at
         
-engine = create_engine('postgresql+psycopg2://postgres:password@localhost:3000/postgres')
+engine = create_engine('postgresql+psycopg2://postgres:password@localhost:3331/postgres')
 Base.metadata.create_all(bind=engine)
 
 Session = sessionmaker(bind=engine)
 
 session = Session()
-
 def user_entry(discord_id,first_name):
     query_data = session.query(User).filter(User.discord_id == str(discord_id)).first()
     
@@ -58,8 +58,8 @@ def user_entry(discord_id,first_name):
 
         return False
     
-def distance_entry(discord_id,distance):
-    session.add(Mile(discord_id,distance))
+def distance_entry(discord_id,distance,created_at):
+    session.add(Mile(discord_id,distance,created_at))
     session.commit()
     
 def getFirstName(discord_id):
@@ -85,4 +85,17 @@ def getListRanking():
         .join(weekly_miles_subquery, User.discord_id == weekly_miles_subquery.c.discord_id) \
         .order_by(weekly_miles_subquery.c.total_distance.desc()) \
         .all()
+    return result
+
+def getListRankingAllTime():
+    result = session.query(
+        User.first_name,func.sum(Mile.distance).label('total_distance')
+    ).join(
+        User,Mile.discord_id == User.discord_id
+    ).group_by(
+        User.first_name
+    ).order_by(
+        func.sum(Mile.distance).desc()
+    ).all()
+    
     return result
