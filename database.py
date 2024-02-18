@@ -6,7 +6,7 @@ from uuid import uuid4
 
 
 
-from sqlalchemy import ForeignKey, Column, String, Integer, CHAR, TIMESTAMP,Float,func,text
+from sqlalchemy import ForeignKey, Column, String, Integer, CHAR, TIMESTAMP,Float,func,text,cast, Numeric
 import datetime
 
 import psycopg2
@@ -72,7 +72,7 @@ def getFirstName(discord_id):
     
 def getListRanking():
 # Define subquery
-    weekly_miles_subquery = session.query(Mile.discord_id, func.sum(Mile.distance).label('total_distance')) \
+    weekly_miles_subquery = session.query(Mile.discord_id, func.round(cast(func.sum(Mile.distance), Numeric),2).label('total_distance')) \
         .filter(
             text("EXTRACT(WEEK FROM created_at) = EXTRACT(WEEK FROM CURRENT_DATE) AND EXTRACT(YEAR FROM created_at) = EXTRACT(YEAR FROM CURRENT_DATE)")
         ) \
@@ -89,7 +89,7 @@ def getListRanking():
 
 def getListRankingAllTime():
     result = session.query(
-        User.first_name,func.sum(Mile.distance).label('total_distance')
+        User.first_name,func.round(cast(func.sum(Mile.distance), Numeric),2).label('total_distance')
     ).join(
         User,Mile.discord_id == User.discord_id
     ).group_by(

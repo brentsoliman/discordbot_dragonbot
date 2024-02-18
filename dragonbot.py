@@ -7,6 +7,7 @@ from collectNames import getNames
 import extraUtils
 
 client=discord.Client(intents=discord.Intents.all())
+import datetime
 
 reader = image_reader.Image_Reader()
 utils = utilsdb.utilsDB()
@@ -33,7 +34,7 @@ async def on_message(message):
             distance = utils.getPoints(reader.readImage(message.attachments[0].url))
             pointsLst = utils.convertMetric(distance)
             #await message.channel.send("Pod of War: +{} {}".format(pointsLst[0],pointsLst[1]))
-            database.distance_entry(message.author.id,float(pointsLst[0]))
+            database.distance_entry(message.author.id,float(pointsLst[0]),datetime.date.today())
             await message.channel.send("{}: +{} {}".format(database.getFirstName(message.author.id),pointsLst[0],pointsLst[1]))
         
 
@@ -63,9 +64,18 @@ async def on_message(message):
             await message.channel.send("User is already registered")
             
     if message.content.startswith("-leaderboard"):
-        rankList = database.getListRanking()
-        rankingString = extraUtils.getRankingString(rankList)
-        await message.channel.send(rankingString)
+        
+        
+        if message.content[len('-leaderboard') + 1:].lower() == 'alltime':
+            print('alltime')
+            rankList = database.getListRankingAllTime()
+            rankingString = extraUtils.getRankingString(rankList, "All Time")
+            await message.channel.send(rankingString)
+        else:
+            print('weekly')
+            rankList = database.getListRanking()
+            rankingString = extraUtils.getRankingString(rankList, "Weekly")
+            await message.channel.send(rankingString)
 
     
 

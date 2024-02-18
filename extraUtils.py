@@ -33,8 +33,8 @@ ranking = {
 }
 
 
-def getRankingString(lst):
-    ret = "" + "{:>22}".format("Weekly Leaderboard\n")
+def getRankingString(lst,timeString):
+    ret = "" + "{:>22}".format("{} Leaderboard\n".format(timeString))
     for x in range(len(lst)):
         ret += "\n{:<5}  {:<10}  {} miles".format(ranking[x + 1],lst[x][0],lst[x][1])
     return ret
