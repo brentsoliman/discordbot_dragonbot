@@ -30,6 +30,8 @@ class utilsDB:
             dic[getDistanceOfTwoPoint(lst[x],targetPoint)] = x
         del dic[0.0]
         val = dic[min(dic.keys())]
+        
+        print(f'this is res: {result[val][1]}')
         return result[val][1]
         
         
@@ -40,6 +42,7 @@ class utilsDB:
     
     def convertMetric(self, var):
         meterVar = list(var)
+        print(meterVar)
         num = ''
         metric = ''
         for x in var:
