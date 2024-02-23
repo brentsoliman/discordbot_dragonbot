@@ -82,20 +82,27 @@ def getListRanking():
 
     # Use the subquery in the outer query
     result = session.query(User.first_name, weekly_miles_subquery.c.total_distance) \
-        .join(weekly_miles_subquery, User.discord_id == weekly_miles_subquery.c.discord_id) \
+        .join(weekly_miles_subquery, User.discord_id == weekly_miles_subquery.c.discord_id).distinct() \
+        .distinct() \
         .order_by(weekly_miles_subquery.c.total_distance.desc()) \
         .all()
     return result
 
 def getListRankingAllTime():
-    result = session.query(
-        User.first_name,func.round(cast(func.sum(Mile.distance), Numeric),2).label('total_distance')
-    ).join(
-        User,Mile.discord_id == User.discord_id
-    ).group_by(
-        User.first_name
-    ).order_by(
-        func.sum(Mile.distance).desc()
-    ).all()
+    subquery = session.query(Mile.discord_id,func.round(cast(func.sum(Mile.distance), Numeric),2).label("total_distance")) \
+    .group_by(Mile.discord_id) \
+    .subquery()
+
+    data = session.query(User.first_name, subquery.c.total_distance) \
+    .join(User, User.discord_id == subquery.c.discord_id) \
+    .distinct() \
+    .order_by(subquery.c.total_distance.desc()).all()
+    return data
+
+def getMostRecentUpload():
+    mileData = session.query(Mile).order_by(Mile.created_at.desc()).first()
+    timeDataString = mileData.created_at.strftime("(%B-%d-%y %I:%M %p)")
     
-    return result
+    userData = session.query(User).filter(User.discord_id == mileData.discord_id).first()
+    return f"{timeDataString} {userData.first_name}: +{mileData.distance} miles"
+    
