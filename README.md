@@ -1,1 +1,1 @@
-dragon.py is the python file that will turn on the discord bot
+Discord bot for tracking the mileage from a workout. Screenshot from strava workout can be posted in the discord chat and the bot will use image recognition to extract the miles travelled and will put it in a leaderboard where the users can see there rankings.
