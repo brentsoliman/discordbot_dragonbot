@@ -3,6 +3,7 @@ from sqlalchemy.orm import declarative_base
 from sqlalchemy.orm import sessionmaker
 from statistics import mean
 from uuid import uuid4
+import creds
 
 
 
@@ -38,7 +39,7 @@ class Mile(Base):
         self.distance = distance
         self.created_at = created_at
         
-engine = create_engine('postgresql+psycopg2://postgres:password@localhost:3331/postgres')
+engine = create_engine(f'postgresql+psycopg2://postgres:{creds.password}@localhost:3331/postgres')
 Base.metadata.create_all(bind=engine)
 
 Session = sessionmaker(bind=engine)

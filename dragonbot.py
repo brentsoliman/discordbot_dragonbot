@@ -5,6 +5,7 @@ import utilsdb
 import database
 from collectNames import getNames
 import extraUtils
+import creds
 
 client=discord.Client(intents=discord.Intents.all())
 import datetime
@@ -166,4 +167,4 @@ async def on_message(message):
         
         
         
-client.run("MTE1NDUzNDQ4NTc0OTEzNzUwOQ.G_BAyu.JG561gIlT95IhB2ikegjG9AhU7ZGa3Wju8LYBI")
+client.run(creds.token)
