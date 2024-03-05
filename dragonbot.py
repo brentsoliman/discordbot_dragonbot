@@ -35,7 +35,7 @@ async def on_message(message):
             pointsLst = utils.convertMetric(distance)
             #await message.channel.send("Pod of War: +{} {}".format(pointsLst[0],pointsLst[1]))
             database.distance_entry(message.author.id,float(pointsLst[0]),datetime.datetime.now())
-            #await message.channel.send("{}: +{} {}".format(database.getFirstName(message.author.id),pointsLst[0],pointsLst[1]))
+            await message.channel.send("{}: +{} {}".format(database.getFirstName(message.author.id),pointsLst[0],pointsLst[1]))
             await message.add_reaction("✅")
             
             c = client.get_channel(1210347285943423087)
